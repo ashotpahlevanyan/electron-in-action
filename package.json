@@ -1,0 +1,19 @@
+{
+  "name": "electroninaction",
+  "version": "1.0.0",
+  "description": "electron application for bookmarks",
+  "main": "./app/main.js",
+  "scripts": {
+    "test": "test",
+    "start": "electron ."
+  },
+  "keywords": [
+    "electron",
+    "bookmarks"
+  ],
+  "author": "Ashot Pahlevanyan",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^3.0.9"
+  }
+}
