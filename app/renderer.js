@@ -7,7 +7,7 @@ const newLinkUrl = document.querySelector('.new-link-url');
 const newLinkSubmit = document.querySelector('.new-link-submit');
 const clearStorageButton = document.querySelector('.clear-storage');
 
-
+//renderLinks(); not woking since localStoreage reading is promise
 
 newLinkUrl.addEventListener('keyup', () => {
 	newLinkSubmit.disabled = !newLinkSubmit.validity.valid;
@@ -21,7 +21,9 @@ newLinkForm.addEventListener('submit', () => {
 		.then(response => response.text())
 		.then(parseResponse)
 		.then(findTitle)
-		.then(alert);
+		.then(title => storeLink(title, url))
+		.then(clearForm)
+		.then(renderLinks);
 });
 
 const parseResponse = (text) => {
@@ -31,6 +33,37 @@ const parseResponse = (text) => {
 const findTitle = (nodes) => {
 	return nodes.querySelector('title').innerText;
 };
+
+const storeLink = (title, url) => {
+	alert(`${title} : ${url}`);
+	localStorage.setItem(url, JSON.stringify({title: title, url: url}));
+};
+
+const getLinks = () => {
+	return Object.keys(localStorage)
+		.map(key => JSON.parse(localStorage.getItem(key)));
+};
+
+const convertToElement = (link) => {
+	return `
+		<div class="link">
+			<h3>${link.title}</h3>
+			<p>
+				<a href="${link.url}">${link.url}</a>
+			</p>
+		</div>
+	`
+};
+
+const renderLinks = () => {
+	const linkElements = getLinks().map(convertToElement).join('');
+	linksSection.innerHTML = linkElements;
+};
+
+clearStorageButton.addEventListener('click', () => {
+	localStorage.clear();
+	linksSection.innerHTML = '';
+});
 
 const clearForm = () => {
 	newLinkUrl.value = null;
