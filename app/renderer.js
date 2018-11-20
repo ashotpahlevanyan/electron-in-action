@@ -1,3 +1,4 @@
+const {shell} = require('electron');
 const parser = new DOMParser();
 
 const linksSection = document.querySelector('.links');
@@ -16,12 +17,21 @@ newLinkForm.addEventListener('submit', () => {
 
 	const url = newLinkUrl.value;
 	fetch(url)
+		.then(validateResponse)
 		.then(response => response.text())
 		.then(parseResponse)
 		.then(findTitle)
 		.then(title => storeLink(title, url))
 		.then(clearForm)
-		.then(renderLinks);
+		.then(renderLinks)
+		.catch(error => handleError(error, url));
+});
+
+linksSection.addEventListener('click', (event) => {
+	if(event.target.href) {
+		event.preventDefault();
+		shell.openExternal(event.target.href);
+	}
 });
 
 const parseResponse = (text) => {
@@ -33,7 +43,6 @@ const findTitle = (nodes) => {
 };
 
 const storeLink = (title, url) => {
-	alert(`${title} : ${url}`);
 	localStorage.setItem(url, JSON.stringify({title: title, url: url}));
 };
 
@@ -66,5 +75,21 @@ clearStorageButton.addEventListener('click', () => {
 const clearForm = () => {
 	newLinkUrl.value = null;
 };
+
+const handleError = (error, url) => {
+	errorMessage.innerHTML = `
+	There was an issue adding "${url}" : ${error.message}
+`.trim();
+	setTimeout(() => errorMessage.innerText = null, 5000);
+};
+
+
+const validateResponse = (response) => {
+	if(response.ok) {
+		return response;
+	}
+	throw new Error(`Status code of ${response.status} ${response.statusText}`);
+};
+
 
 renderLinks();
