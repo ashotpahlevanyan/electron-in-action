@@ -7,8 +7,6 @@ const newLinkUrl = document.querySelector('.new-link-url');
 const newLinkSubmit = document.querySelector('.new-link-submit');
 const clearStorageButton = document.querySelector('.clear-storage');
 
-//renderLinks(); not woking since localStoreage reading is promise
-
 newLinkUrl.addEventListener('keyup', () => {
 	newLinkSubmit.disabled = !newLinkSubmit.validity.valid;
 });
@@ -68,3 +66,5 @@ clearStorageButton.addEventListener('click', () => {
 const clearForm = () => {
 	newLinkUrl.value = null;
 };
+
+renderLinks();
